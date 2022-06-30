@@ -1,4 +1,4 @@
-class User < ApplicationRecord
+class User < ApplicationRecord # 4章終了完了
     before_save { self.email = email.downcase }
     
   validates :name,  presence: true, length: { maximum: 50 }
