@@ -3,14 +3,13 @@ class UsersController < ApplicationController
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
+  before_action :set_one_month, only: :show
 
   def index
     @users = User.paginate(page: params[:page])
   end
 
   def show
-    @first_day = Date.current.beginning_of_month
-    @last_day = @first_day.end_of_month
   end
 
   def new
@@ -50,48 +49,47 @@ class UsersController < ApplicationController
   end
 
   def update_basic_info
-   if @user.update_attributes(basic_info_params)
-     flash[:success] = "#{@user.name}の基本情報を更新しました。"
-   else
-    flash[:danger] = "#{@user.name}の更新は失敗しました。<br>" + @user.errors.full_messages.join("<br>")
-   end
-   redirect_to users_url
+    if @user.update_attributes(basic_info_params)
+      flash[:success] = "#{@user.name}の基本情報を更新しました。"
+    else
+      flash[:danger] = "#{@user.name}の更新は失敗しました。<br>" + @user.errors.full_messages.join("<br>")
+    end
+    redirect_to users_url
   end
 
   private
 
-  def user_params
+    def user_params
       params.require(:user).permit(:name, :email, :department, :password, :password_confirmation)
-  end
+    end
 
-  def basic_info_params
+    def basic_info_params
       params.require(:user).permit(:department, :basic_time, :work_time)
-  end
+    end
 
     # beforeフィルター
 
     # paramsハッシュからユーザーを取得します。
-  def set_user
+    def set_user
       @user = User.find(params[:id])
-  end
+    end
 
     # ログイン済みのユーザーか確認します。
-  def logged_in_user
+    def logged_in_user
       unless logged_in?
         store_location
         flash[:danger] = "ログインしてください。"
         redirect_to login_url
       end
-  end
+    end
 
     # アクセスしたユーザーが現在ログインしているユーザーか確認します。
-  def correct_user
+    def correct_user
       redirect_to(root_url) unless current_user?(@user)
-  end
+    end
 
     # システム管理権限所有かどうか判定します。
-  def admin_user
+    def admin_user
       redirect_to root_url unless current_user.admin?
-  end
-  
+    end
 end
