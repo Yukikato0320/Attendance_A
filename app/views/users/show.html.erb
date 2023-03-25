@@ -52,15 +52,16 @@
       <tr>
         <td><%= l(day.worked_on, format: :short) %></td>
         <td class ="<%= "wday#[day.worked_on.wday]" %>"><%= $days_of_the_week[day.worked_on.wday] %></td>
-        <td><%= day.started_at.floor_to(15.minutes).hour if day.started_at.present? %></td>
-        <td><%= day.started_at.floor_to(15.minutes).min if day.started_at.present? %></td>
+        <!--900は15分を秒で表した数値。(60秒×15分=900秒)floor_toメソッドは、gemを追加する必要があるため、Time#methodで、聞き捨てたい分数を(秒数)にして導き出す方を推奨-->
+        <td><%= day.started_at.round(900).hour if day.started_at.present? %></td>
+        <td><%= day.started_at.round(900).min if day.started_at.present? %></td>
         <td>
           <% if (Date.current == day.worked_on) && day.started_at.nil? %>
             <%= link_to "出社", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
           <% end %>
         </td>
-        <td><%= day.finished_at.floor_to(15.minutes).hour if day.finished_at.present? %></td>
-        <td><%= day.finished_at.floor_to(15.minutes).min if day.finished_at.present? %></td>
+        <td><%= day.finished_at.round(900).hour if day.finished_at.present? %></td>
+        <td><%= day.finished_at.round(900).min if day.finished_at.present? %></td>
         <td>
           <% if (Date.current == day.worked_on) && day.started_at.present? && day.finished_at.nil? %>
             <%= link_to "退社", user_attendance_path(@user,day), method: :patch, class:"btn btn-primary btn-attendance" %>
@@ -69,7 +70,7 @@
         
         <td>
           <% if day.started_at.present? && day.finished_at.present? %>
-            <%= str_times = working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
+            <%= str_times = working_times(day.started_at.round(900), day.finished_at.round(900)) %>
             <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
           <% end %>
         </td>
