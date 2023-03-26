@@ -52,7 +52,8 @@
       <tr>
         <td><%= l(day.worked_on, format: :short) %></td>
         <td class ="<%= "wday#[day.worked_on.wday]" %>"><%= $days_of_the_week[day.worked_on.wday] %></td>
-        <!--900は15分を秒で表した数値。(60秒×15分=900秒)floor_toメソッドは、gemを追加する必要があるため、Time#methodで、聞き捨てたい分数を(秒数)にして導き出す方を推奨-->
+        <!--900は15分を秒で表した数値。(60秒×15分=900秒)floor_toメソッドは、gemを追加する必要があるため、
+        Time#methodで、聞き捨てたい分数を(秒数)にして導き出す方を推奨-->
         <td><%= day.started_at.round(900).hour if day.started_at.present? %></td>
         <td><%= day.started_at.round(900).min if day.started_at.present? %></td>
         <td>
@@ -83,7 +84,7 @@
       <!--rowspan:縦連結, colspan: 横連結-->
       <tr>
        <td colspan="2">累計日数</td>
-       <td colspan="2">総合勤務時間</td>
+       <td colspan="6">総合勤務時間</td>
        <td colspan="2">累計在社時間</td>
       </tr>
       <tr>
