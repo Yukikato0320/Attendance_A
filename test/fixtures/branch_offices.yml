@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  branch_office_name: MyString
+  branch_office_number: MyString
+  attendance_type: MyString
+
+two:
+  branch_office_name: MyString
+  branch_office_number: MyString
+  attendance_type: MyString
