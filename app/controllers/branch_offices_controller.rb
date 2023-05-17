@@ -1,2 +1,2 @@
 class BranchOfficesController < ApplicationController
-end
+end 
