@@ -1,1 +1,57 @@
+<% provide(:button_text, '追加') %>
 <h1>拠点一覧</h1>
+
+<div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-bordered table-condensed table-striped table-hover" id="table-bases">
+          <thead>
+            <th class="col-sm-1"></th>
+            <th class="col-sm-1"></th>
+            <th class="col-sm-3">拠点番号</th>
+            <th class="col-sm-3">拠点名</th>
+            <th class="col-sm-3">勤怠種類</th>
+          </thread>
+          <tbody>
+            <td></td>
+            <td></td>
+            <td>あ</td>
+            <td>い</td>
+            <td>う</td>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+
+
+<div>
+    <tr>
+      <div class="well well-sm">
+        <button type="button" class="btn btn-primary" data-toggle="collapse"
+         data-target="#collapse_branch_offices">拠点情報の追加</button>
+      </div>
+      <td>
+         <div id="collapse_branch_offices" class="collapse">
+          <%= form_with(model: @branch_office, url: branch_offices_path, local: true, method: :post) do |f| %>
+            <table class="table table-bordered table-striped table-status" id="table-attendances">
+                <tbody class="card card-body">
+                  <%= f.label :branch_office_number %>
+                  <%= f.text_field :branch_office_number, class: "form-control" %>
+                  <%= f.label :branch_office_name %>
+                  <%= f.text_field :branch_office_name, class: "form-control" %>
+                  <%= f.label :attendance_type %>
+                  <%= f.select :attendance_type, [[''], [''], ['']], { include_blank: true }, class: "form-control" %>
+                <br>
+                <div class="center">
+                  <%= f.submit yield(:button_text), class: "btn btn-primary form-control" %>
+                </div>
+                </tbody>
+            </table>
+          <% end %>
+         </div>
+      </td>
+    </tr>
+</div>
+
+    
