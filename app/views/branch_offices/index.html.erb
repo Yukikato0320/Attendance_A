@@ -1,3 +1,4 @@
+<% provide(:title, 'Branch Offices') %>
 <% provide(:button_text, '追加') %>
 <h1>拠点一覧</h1>
 
@@ -12,13 +13,20 @@
             <th class="col-sm-3">拠点名</th>
             <th class="col-sm-3">勤怠種類</th>
           </thread>
+          <% @branch_offices.each do |b| %>
           <tbody>
-            <td></td>
-            <td></td>
-            <td>あ</td>
-            <td>い</td>
-            <td>う</td>
+            <tr class="center">
+              <td><%= link_to '編集', edit_branch_office_path(b), remote: true,
+                  class: "center btn btn-primary" %></td>
+              <td><%= link_to '削除', branch_office_path(b), method: :delete,
+                  data: { confirm: "削除してもよろしいですか?"}, 
+                  class: "center btn btn-primary"  %></td>
+              <td><%= b.branch_office_number %></td>
+              <td><%= b.branch_office_name %></td>
+              <td><%= b.attendance_type %></td>
+            </tr>
           </tbody>
+          <% end %>
         </table>
       </div>
     </div>
@@ -41,7 +49,7 @@
                   <%= f.label :branch_office_name %>
                   <%= f.text_field :branch_office_name, class: "form-control" %>
                   <%= f.label :attendance_type %>
-                  <%= f.select :attendance_type, [[''], [''], ['']], { include_blank: true }, class: "form-control" %>
+                  <%= f.select :attendance_type, [['なし'], ['出勤'], ['退勤']], { include_blank: true }, class: "form-control" %>
                 <br>
                 <div class="center">
                   <%= f.submit yield(:button_text), class: "btn btn-primary form-control" %>
