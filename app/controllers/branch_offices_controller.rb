@@ -7,6 +7,7 @@ class BranchOfficesController < ApplicationController
     @branch_offices = BranchOffice.all
   end
   
+  
   def create
     @branch_office = BranchOffice.create(branch_office_params)
     flash[:success] = "#{@branch_office.branch_office_name}のデータを作成しました。"
@@ -23,7 +24,7 @@ class BranchOfficesController < ApplicationController
     @branch_office = BranchOffice.find(params[:id])
     if @branch_office.update(branch_office_params)
       flash[:success] = '編集に成功しました。'
-      redirect_to branch_office_path
+      redirect_to branch_offices_path
     else
       flash[:danger] = '編集に失敗しました。'
       render :index
