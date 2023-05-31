@@ -1,16 +1,11 @@
 class BranchOfficesController < ApplicationController
   before_action :admin_user
-   
+  
+  
   def index
     @branch_office = BranchOffice.new
     @branch_offices = BranchOffice.all
   end
-  
-  
-  def new
-    @branch_office = BranchOffice.new
-  end
-  
   
   def create
     @branch_office = BranchOffice.create(branch_office_params)
@@ -48,7 +43,7 @@ class BranchOfficesController < ApplicationController
   
   
   def branch_office_params
-    params.require(:branch_office).permit(:branch_name, :branch_number, :attendance_type)
+    params.require(:branch_office).permit(:branch_office_name, :branch_office_number, :attendance_type)
   end
   
 end 

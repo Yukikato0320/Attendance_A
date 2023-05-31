@@ -19,8 +19,7 @@
               <td><%= link_to '編集', edit_branch_office_path(b), remote: true,
                   class: "center btn btn-primary" %></td>
               <td><%= link_to '削除', branch_office_path(b), method: :delete,
-                  data: { confirm: "削除してもよろしいですか?"}, 
-                  class: "center btn btn-primary"  %></td>
+                  data: { confirm: "削除してもよろしいですか?"}, class: "center btn btn-primary"  %></td>
               <td><%= b.branch_office_number %></td>
               <td><%= b.branch_office_name %></td>
               <td><%= b.attendance_type %></td>
