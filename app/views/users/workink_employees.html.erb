@@ -1,0 +1,23 @@
+<% provide(:title, 'List of Employees Currently at Work') %>
+<h1>出勤中社員一覧</h1>
+
+  <table class="table table-bordered table-striped table-condensed table-status">
+    <thead>
+      <tr>
+        <th class="center">社員番号</th>
+        <th class="center">名前</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <% user.attendances.each do |attendance| %>
+          <% if (attendance.worked_on == Date.current) && attendance.started_at.present? && attendance.finished_at.nil? %>
+            <tr class="center">
+              <td><%= user.employee_number %></td>
+              <td><%= user.name %></td>
+            </tr>
+          <% end %>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
