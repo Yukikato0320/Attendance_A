@@ -25,6 +25,6 @@ ja:
           note: 備考
           user: ユーザーID
         branch_office:
-          branch_office_number: 拠点番号 
+          branch_office_number: 拠点番号
           branch_office_name: 拠点名
           attendance_type: 勤怠種類

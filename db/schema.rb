@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20230731151537) do
+ActiveRecord::Schema.define(version: 20230801162902) do
 
   create_table "attendances", force: :cascade do |t|
     t.date "worked_on"
@@ -20,6 +20,26 @@ ActiveRecord::Schema.define(version: 20230731151537) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "started_at_before"
+    t.datetime "finished_at_before"
+    t.datetime "started_at_edited"
+    t.datetime "finished_at_edited"
+    t.datetime "estimated_overtime_hours"
+    t.string "business_process_content"
+    t.boolean "next_day_overtime"
+    t.boolean "next_day_working_hours"
+    t.integer "selector_overtime_request"
+    t.integer "selector_working_hours_request"
+    t.integer "selector_monthly_request"
+    t.date "date_monthly_request"
+    t.boolean "change_overtime"
+    t.boolean "change_working_hours"
+    t.boolean "change_monthly"
+    t.string "status_overtime"
+    t.string "status_working_hours"
+    t.string "status_monthly"
+    t.datetime "year_starting"
+    t.datetime "year_ending"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -40,12 +60,14 @@ ActiveRecord::Schema.define(version: 20230731151537) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "department"
-    t.datetime "basic_time", default: "2023-07-31 23:00:00"
-    t.datetime "work_time", default: "2023-07-31 22:30:00"
+    t.datetime "basic_time", default: "2023-08-01 23:00:00"
+    t.datetime "work_time", default: "2023-08-01 22:30:00"
     t.string "affiliation"
     t.integer "employee_number"
     t.string "uid"
     t.boolean "superior", default: false
+    t.datetime "designated_work_start_time"
+    t.datetime "designated_work_end_time"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
