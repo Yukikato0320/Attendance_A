@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20230801162902) do
+ActiveRecord::Schema.define(version: 20230801165731) do
 
   create_table "attendances", force: :cascade do |t|
     t.date "worked_on"
@@ -26,15 +26,15 @@ ActiveRecord::Schema.define(version: 20230801162902) do
     t.datetime "finished_at_edited"
     t.datetime "estimated_overtime_hours"
     t.string "business_process_content"
-    t.boolean "next_day_overtime", default: false
-    t.boolean "next_day_working_hours", default: false
-    t.integer "selector_overtime_request", default: 0
-    t.integer "selector_working_hours_request",default: 0
-    t.integer "selector_monthly_request", default: 0
+    t.boolean "next_day_overtime"
+    t.boolean "next_day_working_hours"
+    t.integer "selector_overtime_request"
+    t.integer "selector_working_hours_request"
+    t.integer "selector_monthly_request"
     t.date "date_monthly_request"
-    t.boolean "change_overtime", default: false
-    t.boolean "change_working_hours", default: false
-    t.boolean "change_monthly", default: false
+    t.boolean "change_overtime"
+    t.boolean "change_working_hours"
+    t.boolean "change_monthly"
     t.string "status_overtime"
     t.string "status_working_hours"
     t.string "status_monthly"
@@ -66,8 +66,9 @@ ActiveRecord::Schema.define(version: 20230801162902) do
     t.integer "employee_number"
     t.string "uid"
     t.boolean "superior", default: false
-    t.datetime "designated_work_start_time"
-    t.datetime "designated_work_end_time"
+    t.datetime "designated_work_start_time", default: "2023-08-02 00:00:00"
+    t.datetime "designated_work_end_time", default: "2023-08-02 09:00:00"
+    t.datetime "basic_work_time"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
