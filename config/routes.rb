@@ -10,6 +10,11 @@ Rails.application.routes.draw do
   resources :branch_offices
 
   resources :users do
+
+ # collectionは:id無し
+    # CSVインポート POST /users/import
+    collection { post :import }
+# memberは:idあり
     member do
       get 'edit_basic_info'
       patch 'update_basic_info'

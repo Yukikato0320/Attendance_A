@@ -11,6 +11,20 @@ class UsersController < ApplicationController
     @search_user = params[:search]
   end
 
+  def import
+    if params[:csv_file].blank?
+      flash[:danger] = '読み込むCSVを選択してください'
+    elsif File.extname(params[:csv_file].original_filename) != '.csv'
+      flash[:danger] = 'csvファイル以外は出力できません'
+      redirect_to users_url and return
+    else
+      User.import(params[:csv_file])
+      flash[:success] = 'CSVファイルの情報を追加しました'
+    end
+    redirect_to users_path and return
+  end
+
+
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count
   end
