@@ -1,49 +1,75 @@
 <% provide(:title, 'All Users') %>
+<% provide(:button_text, '更新') %>
+<h1>ユーザー一覧</h1>
 
-<% if !@search_user.blank? %>
-  <h1>検索結果</h1>
-<% else %>
-  <h1>全てのユーザー</h1>
-<% end %>
+<div class="col-md-8 col-md-offset-2">
 
-<div class="row">
-  
-  <div class="col-md-offset-8">
-    <%= form_tag(users_path, method: :get) do %>
-      <%= label_tag :name, "ユーザー名検索", class:"label-search" %>
-      <div class="input-group">
-        <%= text_field_tag :search, "", placeholder: "キーワードを入力...", class:"form-control" %>
-        <span class="input-group-btn">
-        <%= submit_tag '検索', :name => nil, class: "btn btn-primary" %>
-        </span>
-      </div>
-    <% end %>
-  </div>
-</div>
+  <#% Importing a CSV file %>
+  <%= form_with(url: import_users_path, method: :post, multipart: true) do %>
+    <%= file_field_tag :csv_file %>
+    <%= submit_tag 'CSVをインポート', class: "btn btn-primary" %>
+  <% end %>
 
-<div class="col-md-10 col-md-offset-1">
-  <%= will_paginate %>
   <table class="table table-condensed table-hover" id="table-users">
-    <thead>
-      <tr>
-        <th><%= User.human_attribute_name :name %></th>
-      </tr>
-    </thead>
 
     <% @users.each do |user| %>
-      <tr>
-        <td><%= link_to user.name, user %></td>
-        <td class="center">
+      <% if !user.admin? %>
+        <tr><%= user.name %></tr><br>
           <% if current_user.admin? && !current_user?(user) %>
-            <%= link_to "基本情報編集", edit_basic_info_user_path(user), remote: true, class: "btn btn-success" %>
-            <%= link_to "削除", user, method: :delete,
-                data: { confirm: "削除してよろしいですか？" }, class: "btn btn-danger" %>
+            <tr>
+              |<%= link_to "削除", user, method: :delete,
+                                         data: { confirm: "削除してよろしいですか？" },
+                                         class: "btn btn-primary" %><br>
+            </tr>
+
+            <tr>
+            <%# アコーディオン %>
+              <div class="text-left well well-sm">
+                <button type="button" class="btn btn-lg btn-primary" data-toggle="collapse"
+                          data-target="#accordion<%= user.id %>">編集</button>
+              </div>
+
+              <div id="accordion<%= user.id %>" class="collapse">
+                <%= form_with(model: user, url: update_basic_info_user_path(user), local: true) do |f| %>
+
+                  <%= f.label :name %>
+                  <%= f.text_field :name, class: "form-control" %>
+
+                  <%= f.label :email %>
+                  <%= f.text_field :email, class: "form-control" %>
+
+                  <%= f.label :affiliation %>
+                  <%= f.text_field :affiliation, class: "form-control"%>
+
+                  <%= f.label :employee_number %>
+                  <%= f.number_field :employee_number, class: "form-control" %>
+
+                  <%= f.label :uid %>
+                  <%= f.text_field :uid, class: "form-control"%>
+
+                  <%= f.label :password %>
+                  <%= f.password_field :password, class: "form-control" %>
+
+                  <%= f.label :basic_work_time %>
+                  <%= f.time_field :basic_work_time, class: "form-control" %>
+
+                  <%= f.label :designated_work_start_time %>
+                  <%= f.time_field :designated_work_start_time, class: "form-control" %>
+
+                  <%= f.label :designated_work_end_time %>
+                  <%= f.time_field :designated_work_end_time, class: "form-control" %><br>
+
+                  <div class="center">
+                    <%= f.submit yield(:button_text), class: "btn btn-primary form-control" %>
+                  </div>
+                <% end %>
+              </div>
+            </tr>
           <% end %>
-        </td>
-      </tr>
+        <% end %>
     <% end %>
   </table>
-  <%= will_paginate %>
+  <div class="center"><%= will_paginate %></div>
 </div>
 
 <!--モーダルウインドウ表示-->

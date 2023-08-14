@@ -24,7 +24,6 @@ class UsersController < ApplicationController
     redirect_to users_path and return
   end
 
-
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count
   end
