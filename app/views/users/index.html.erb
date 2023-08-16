@@ -17,18 +17,15 @@
         <tr><%= user.name %></tr><br>
           <% if current_user.admin? && !current_user?(user) %>
             <tr>
-              |<%= link_to "削除", user, method: :delete,
-                                         data: { confirm: "削除してよろしいですか？" },
-                                         class: "btn btn-primary" %><br>
+              |&ensp;
+              <%= link_to "削除", user, method: :delete, class: "btn btn-primary" %><br>
             </tr>
-
             <tr>
             <%# アコーディオン %>
               <div class="text-left well well-sm">
                 <button type="button" class="btn btn-lg btn-primary" data-toggle="collapse"
                           data-target="#accordion<%= user.id %>">編集</button>
               </div>
-
               <div id="accordion<%= user.id %>" class="collapse">
                 <%= form_with(model: user, url: update_basic_info_user_path(user), local: true) do |f| %>
 
