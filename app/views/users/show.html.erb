@@ -1,16 +1,19 @@
+<!-- ページのタイトルを提供（ユーザー名を含める）-->
 <% provide(:title, @user.name) %>
+<!-- ユーザー情報を表示するためのテーブル -->
 <div>
   <table class="table table-bordered table-condensed user-table"  id="table-attendance">
     <tr>
-       <td>
+        <td>
+        <!-- 前月へのリンク -->
         <%= link_to "⇦ 前月へ", user_path(date: @first_day.prev_month), class: "btn btn-primary" %>
          &emsp; 【<%= l(@first_day,format: :middle) %>】時間管理表 &emsp;
+        <!-- 次月へのリンク -->
         <%= link_to "次月へ ⇨", user_path(date: @first_day.next_month), class: "btn btn-primary" %>
-       </td>
-      
-       <td>指定勤務時間：<%= format_basic_info(@user.work_time) %></td>
-       <td colspan="3">基本時間：<%= format_basic_info(@user.basic_time) %></td>
-       <td colspan="2">月初日：<%= l(@first_day, format: :short) %></td>
+        </td>
+        <td>指定勤務時間：<%= format_basic_info(@user.work_time) %></td>
+        <td colspan="3">基本時間：<%= format_basic_info(@user.basic_time) %></td>
+        <td colspan="2">月初日：<%= l(@first_day, format: :short) %></td>
     </tr>
 
     <tr>
@@ -21,11 +24,16 @@
     </tr>
   </table>
 </div>
+<!-- ボタン類を表示する部分 -->
 <div class="btn-users-show">
+  <!-- 勤怠を編集するリンク -->
   <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary"%>
+  <!-- CSV出力リンク -->
   <%= link_to 'CSV出力', user_path(format: :csv), class: "btn btn-primary" %><br>
+  <!-- 勤怠修正ログ(承認済)リンク -->
   <%= link_to "勤怠修正ログ(承認済)", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary"%>
 </div>
+<!-- 勤怠データを表示するためのテーブル -->
 <div>
   <table class="table table-bordered table-condensed table-hover" id="table-attendances">
     <thead>
@@ -55,37 +63,48 @@
     </thead>
 
     <tbody>
+      <!-- 勤怠データを繰り返し表示 -->
       <% @attendances.each do |day| %>
-      
+
       <tr>
+        <!-- 勤務日付 -->
         <td><%= l(day.worked_on, format: :short) %></td>
+        <!-- 曜日 -->
         <td class ="<%= "wday#[day.worked_on.wday]" %>"><%= $days_of_the_week[day.worked_on.wday] %></td>
+        <!-- 出社時刻（時） -->
         <td><%= day.started_at.floor_to(15.minutes).hour if day.started_at.present? %></td>
+        <!-- 出社時刻（分） -->
         <td><%= day.started_at.floor_to(15.minutes).min if day.started_at.present? %></td>
+        <!-- 出社ボタン（当日でかつ未出社） -->
         <td>
           <% if (Date.current == day.worked_on) && day.started_at.nil? %>
             <%= link_to "出社", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
           <% end %>
         </td>
+        <!-- 退社時刻（時） -->
         <td><%= day.finished_at.floor_to(15.minutes).hour if day.finished_at.present? %></td>
+        <!-- 退社時刻（分） -->
         <td><%= day.finished_at.floor_to(15.minutes).min if day.finished_at.present? %></td>
+        <!-- 退社ボタン（当日でかつ出社済みで未退社） -->
         <td>
           <% if (Date.current == day.worked_on) && day.started_at.present? && day.finished_at.nil? %>
             <%= link_to "退社", user_attendance_path(@user,day), method: :patch, class:"btn btn-primary btn-attendance" %>
           <% end %>
         </td>
-        
+        <!-- 在社時間計算（出社と退社が共に存在する場合のみ） -->
         <td>
           <% if day.started_at.present? && day.finished_at.present? %>
             <%= str_times = working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
             <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
           <% end %>
         </td>
+        <!-- 備考欄 -->
         <td><%= day.note %></td>
       </tr>
       <% end %>
     </tbody>
- 
+
+    <!-- 合計行 -->
     <tfoot>
       <!--rowspan:縦連結, colspan: 横連結-->
       <tr>

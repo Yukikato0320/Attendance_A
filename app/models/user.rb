@@ -53,15 +53,20 @@ class User < ApplicationRecord
 
   # csvインポート
   def self.import(file)
+    #CSVファイルの各行を処理
     CSV.foreach(file.path, headers: true) do |row|
+      #'id'カラムの値を使って既存のユーザーを検索する。見つからなければ新しいユーザーを作成/特定の属性が意図せず更新されることを防ぐ
       user = find_by(id: row['id']) || new
+      #CSV行のデータから更新可能な属性のみを選んでユーザーオブジェクトに割り当てる
       user.attributes = row.to_hash.slice(*updatable_attributes)
+      #バリデーションを無効にし、ユーザーオブジェクトをデータベースに保存/通常のバリデーションルールを通過せずともデータ保存される
       user.save!(validation: false)
     end
   end
 
   # インポートするカラム
   def self.updatable_attributes
+    # ユーザーオブジェクトの属性のうち、CSVファイルから更新可能なものを指定する
     %w[name email affiliation employee_number uid basic_work_time designated_work_start_time
       designated_work_end_time superior admin password]
   end

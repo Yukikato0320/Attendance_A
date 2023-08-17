@@ -1,31 +1,37 @@
+<!-- ページのタイトルを提供 -->
 <% provide(:title, 'All Users') %>
+<!-- 更新ボタンのテキストを提供 -->
 <% provide(:button_text, '更新') %>
 <h1>ユーザー一覧</h1>
 
 <div class="col-md-8 col-md-offset-2">
 
-  <!-- Importing a CSV file 　-->
+  <!-- CSVファイルのインポートフォーム -->
   <%= form_with(url: import_users_path, method: :post, multipart: true) do %>
     <%= file_field_tag :csv_file %>
     <%= submit_tag 'CSVをインポート', class: "btn btn-primary" %>
   <% end %>
 
+  <!-- ユーザー一覧を表示するテーブル -->
   <table class="table table-condensed table-hover" id="table-users">
 
     <% @users.each do |user| %>
       <% if !user.admin? %>
+        <!-- ユーザー名の表示 -->
         <tr><%= user.name %></tr><br>
           <% if current_user.admin? && !current_user?(user) %>
             <tr>
+              <!-- ユーザーの削除リンク -->
               |&ensp;
               <%= link_to "削除", user, method: :delete, class: "btn btn-primary" %><br>
             </tr>
             <tr>
-              <!-- アコーディオン 　-->
+              <!-- アコーディオンボタン 　-->
               <div class="text-left well well-sm">
                 <button type="button" class="btn btn-lg btn-primary" data-toggle="collapse"
                           data-target="#accordion<%= user.id %>">編集</button>
               </div>
+              <!-- アコーディオン内のフォーム -->
               <div id="accordion<%= user.id %>" class="collapse">
                 <%= form_with(model: user, url: update_basic_info_user_path(user), local: true) do |f| %>
                   <!-- 名前　　-->
@@ -56,6 +62,7 @@
                   <%= f.label :designated_work_end_time %>
                   <%= f.time_field :designated_work_end_time, class: "form-control" %><br>
 
+                  <!-- フォームの送信ボタン -->
                   <div class="center">
                     <%= f.submit yield(:button_text), class: "btn btn-primary form-control" %>
                   </div>

@@ -1,4 +1,6 @@
+<!-- ページのタイトルを提供 -->
 <% provide(:title, 'List of Employees Currently at Work') %>
+<!-- ヘッダーとして出勤中社員一覧のタイトルを表示 -->
 <h1>出勤中社員一覧</h1>
 
   <table class="table table-bordered table-striped table-condensed table-status">
@@ -9,11 +11,17 @@
       </tr>
     </thead>
     <tbody>
+      <!-- ユーザー一覧から各ユーザーを取得 -->
       <% @users.each do |user| %>
+        <!-- 各ユーザーの出勤記録を取得 -->
         <% user.attendances.each do |attendance| %>
+          <!-- 今日の日付であり、出勤が記録されており、退勤が記録されていない場合の条件をチェック -->
           <% if (attendance.worked_on == Date.current) && attendance.started_at.present? && attendance.finished_at.nil? %>
+            <!-- テーブルの行を中央寄せで作成 -->
             <tr class="center">
+              <!-- ユーザーの社員番号を表示 -->
               <td><%= user.employee_number %></td>
+              <!-- ユーザーの名前を表示 -->
               <td><%= user.name %></td>
             </tr>
           <% end %>
