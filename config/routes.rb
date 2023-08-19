@@ -18,7 +18,10 @@ Rails.application.routes.draw do
       get 'edit_basic_info'
       patch 'update_basic_info'
       get 'attendances/edit_one_month'
-      patch 'attendances/update_one_month' # この行が追加対象です。
+      patch 'attendances/update_one_month'
+
+      get 'attendance_log' # 勤怠ログ(承認済み)
+
     end
 
     collection do
