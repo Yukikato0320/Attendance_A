@@ -6,31 +6,40 @@ class UsersController < ApplicationController
   before_action :admin_or_correct_user, only: :show
   before_action :set_one_month, only: :show
 
+
   def index
     @users = User.paginate(page: params[:page]).search(params[:search]).order(id: "ASC")
     @search_user = params[:search]
   end
 
+
   def import
+    # CSVファイルが選択されていない場合、エラーメッセージを表示
     if params[:csv_file].blank?
       flash[:danger] = '読み込むCSVを選択してください'
+    # 選択されたファイルがCSVファイルでない場合、エラーメッセージを表示してリダイレクト
     elsif File.extname(params[:csv_file].original_filename) != '.csv'
       flash[:danger] = 'csvファイル以外は出力できません'
       redirect_to users_url and return
+    # 正常な場合、CSVファイルを読み込んでデータベースに追加し、成功メッセージを表示
     else
       User.import(params[:csv_file])
       flash[:success] = 'CSVファイルの情報を追加しました'
     end
+    # どの場合でもユーザー一覧画面にリダイレクトする
     redirect_to users_path and return
   end
+
 
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count
   end
 
+
   def new
     @user = User.new
   end
+
 
   def create
     @user = User.new(user_params)
@@ -43,8 +52,10 @@ class UsersController < ApplicationController
     end
   end
 
+
   def edit
   end
+
 
   def update
     if @user.update_attributes(user_params)
@@ -55,14 +66,17 @@ class UsersController < ApplicationController
     end
   end
 
+
   def destroy
     @user.destroy
     flash[:success] = "#{@user.name}のデータを削除しました。"
     redirect_to users_url
   end
 
+
   def edit_basic_info
   end
+
 
   def update_basic_info
     if @user.update_attributes(basic_info_params)
@@ -73,15 +87,19 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
+
   def working_employees
     @users = User.all.includes(:attendances)
   end
 
+
   private
+
 
     def user_params
       params.require(:user).permit(:name, :email, :department, :password, :password_confirmation)
     end
+
 
     def basic_info_params
       params.require(:user).permit(:department, :basic_time, :work_time)
