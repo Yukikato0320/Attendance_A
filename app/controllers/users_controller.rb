@@ -62,7 +62,7 @@ class UsersController < ApplicationController
       flash[:success] = "ユーザー情報を更新しました。"
       redirect_to @user
     else
-      render :edit      
+      render :edit
     end
   end
 
@@ -85,6 +85,24 @@ class UsersController < ApplicationController
       flash[:danger] = "#{@user.name}の更新は失敗しました。<br>" + @user.errors.full_messages.join("<br>")
     end
     redirect_to users_url
+  end
+
+
+  def attendance_confirmation
+    @worked_sum = @attendances.where.not(started_at: nil).count
+  end
+
+
+  def attendance_log
+    @user = User.find(params[:id])
+    if params['worked_on(1i)'].present? && params['worked_on(2i)'].present? # worked_on(1i)は年　worked_on(2i)は月
+      selected_year_and_month = "#{params['worked_on(1i)']}/#{params['worked_on(2i)']}" # "2021/05"
+      # @day = Sat, 01 May 2021 00:00:00 +0000
+      @day = DateTime.parse(selected_year_and_month) if selected_year_and_month.present?
+      @attendances = @user.attendances.where(status_working_hours: '承認').where(worked_on: @day.all_month) # 承認済みをwhereで絞り込む
+    else
+      @attendances = @user.attendances.where(status_working_hours: '承認').order('worked_on ASC') # 全ての承認済みを日付順で出す
+    end
   end
 
 

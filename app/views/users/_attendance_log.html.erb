@@ -1,0 +1,52 @@
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+
+    <div>
+      <h1>勤怠ログ</h1>
+      <p>
+      <div class="col-xs-2">
+        <%= form_with(url: attendance_log_user_path, remote: true, method: :get) do |f| %>
+          <%= f.date_select :worked_on, { use_month_numbers: true, discard_day: true, prompt:["年","月"] }, { class: "form-control" } %>
+          <%= f.submit "検索", class: "btn btn-md btn-primary" %>
+        <% end %>
+      </div>
+      </p>
+
+      <table class="table table-bordered table-condensed table-striped">
+
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>変更前出社時間</th>
+            <th>変更前退社時間</th>
+            <th>変更後出社時間</th>
+            <th>変更後退社時間</th>
+            <th>指示者</th>
+            <th>承認日</th>
+          </tr>
+        </thead>
+        <% @attendances.each do |day| %>
+          <% superior = User.find_by(employee_number: day.selector_working_hours_request) %>
+          <tbody>
+            <tr>
+              <td><%= l(day.worked_on, format: :short) %></td>
+              <td><%= l(day.started_at_before, format: :time) if day.started_at_before.present? %></td>
+              <td><%= l(day.finished_at_before, format: :time) if day.finished_at_before.present? %></td>
+              <td><%= l(day.started_at_edited, format: :time) if day.started_at_edited.present? %></td>
+              <td><%= l(day.finished_at_edited, format: :time) if day.finished_at_edited.present? %></td>
+              <td><%= superior.name %></td>
+              <td><%= l(day.updated_at, format: :custom) if day.updated_at.present? %></td>
+            </tr>
+          </tbody>
+        <% end %>
+      </table>
+      <p>注: 変更前出社時間と変更前退社時間はそれぞれ一番最初に記録された時間です。</p>
+    </div>
+
+    </div>
+  </div>
+</div>

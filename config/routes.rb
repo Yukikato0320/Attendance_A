@@ -20,6 +20,8 @@ Rails.application.routes.draw do
       get 'attendances/edit_one_month'
       patch 'attendances/update_one_month'
 
+      get 'attendance_confirmation'
+      # GET /users/:id/attendance_log
       get 'attendance_log' # 勤怠ログ(承認済み)
 
     end

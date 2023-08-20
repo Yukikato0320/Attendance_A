@@ -19,7 +19,7 @@ class User < ApplicationRecord
 
   # 渡された文字列のハッシュ値を返します。
   def User.digest(string)
-    cost = 
+    cost =
       if ActiveModel::SecurePassword.min_cost
         BCrypt::Engine::MIN_COST
       else
