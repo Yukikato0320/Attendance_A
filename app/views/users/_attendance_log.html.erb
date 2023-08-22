@@ -5,34 +5,34 @@
         <span aria-hidden="true">&times;</span>
       </button>
 
-    <div>
-      <h1>勤怠ログ</h1>
-      <p>
-      <div class="col-xs-2">
-        <%= form_with(url: attendance_log_user_path, remote: true, method: :get) do |f| %>
-          <!-- 年月選択 -->
-          <%= f.date_select :worked_on, { use_month_numbers: true, discard_day: true, prompt:["年","月"] }, { class: "form-control" } %>
-          <!-- 検索ボタン -->
-          <%= f.submit "検索", class: "btn btn-md btn-primary" %>
-        <% end %>
-      </div>
-      </p>
+      <div>
+        <h1>勤怠ログ</h1>
+        <p>
+        <div class="col-xs-2">
+          <%= form_with(url: attendance_log_user_path, remote: true, method: :get) do |f| %>
+            <!-- 年月選択 -->
+            <%= f.date_select :worked_on, { use_month_numbers: true, discard_day: true, prompt:["年","月"] }, { class: "form-control" } %>
+            <!-- 検索ボタン -->
+            <%= f.submit "検索", class: "btn btn-md btn-primary" %>
+          <% end %>
+        </div>
+        </p>
 
-      <table class="table table-bordered table-condensed table-striped">
-        <!-- 項目各種 -->
-        <thead>
-          <tr>
-            <th>日付</th>
-            <th>変更前出社時間</th>
-            <th>変更前退社時間</th>
-            <th>変更後出社時間</th>
-            <th>変更後退社時間</th>
-            <th>指示者</th>
-            <th>承認日</th>
-          </tr>
-        </thead>
+        <table class="table table-bordered table-condensed table-striped">
+          <!-- 項目各種 -->
+          <thead>
+            <tr>
+              <th>日付</th>
+              <th>変更前出社時間</th>
+              <th>変更前退社時間</th>
+              <th>変更後出社時間</th>
+              <th>変更後退社時間</th>
+              <th>指示者</th>
+              <th>承認日</th>
+            </tr>
+          </thead>
 
-        <% @attendances.each do |day| %>
+          <% @attendances.each do |day| %>
           <% superior = User.find_by(employee_number: day.selector_working_hours_request) %>
           <tbody>
             <tr>
@@ -51,11 +51,10 @@
               <td><%= l(day.updated_at, format: :custom) if day.updated_at.present? %></td>
             </tr>
           </tbody>
-        <% end %>
-      </table>
-      <p>注: 変更前出社時間と変更前退社時間はそれぞれ一番最初に記録された時間です。</p>
-    </div>
-
+          <% end %>
+        </table>
+        <p>注: 変更前出社時間と変更前退社時間はそれぞれ一番最初に記録された時間です。</p>
+      </div>
     </div>
   </div>
 </div>
