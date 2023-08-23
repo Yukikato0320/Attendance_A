@@ -76,7 +76,7 @@
       <tr>
         
         <!-- 残業申請ボタン/仮/本:edit_overtime_request_user_attendance_path -->
-        <td><%= link_to '残業申請', user_attendance_path(@user, day), remote: true, class: "btn btn-primary" %></td>
+        <td><%= link_to '残業申請', edit_overtime_request_user_attendance_path(@user, day), remote: true, class: "btn btn-primary" %></td>
 
         <!-- 日付 -->
         <td><%= l(day.worked_on, format: :short) %></td>

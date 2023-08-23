@@ -37,6 +37,7 @@ class AttendancesController < ApplicationController
         attendance.save!(context: :update_one_month) #ここで↑で更新した値をレコードに保存(同時にバリデーションを実行)
       end
     end
+
     flash[:success] = "1ヶ月分の勤怠情報を更新しました。" #トランザクションが正常に稼働したら出る。
     redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
@@ -44,11 +45,18 @@ class AttendancesController < ApplicationController
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
 
+
+  # 残業申請 表示
+  def edit_overtime_request
+    @user = User.find(params[:user_id])
+    @attendance = Attendance.find(params[:id])
+  end
+
   private
 
-    # 1ヶ月分の勤怠情報を扱います。
-    def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
-    end
-    
+  # 1ヶ月分の勤怠情報を扱います。
+  def attendances_params
+    params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+  end
+
 end

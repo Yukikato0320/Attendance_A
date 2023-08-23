@@ -30,6 +30,15 @@ Rails.application.routes.draw do
       get 'working_employees'
     end
 
-    resources :attendances, only: :update
+    
+
+    resources :attendances, only: :update do
+      member do
+        # GET /users/:user_id/attendances/:id/edit_overtime_request
+        get 'edit_overtime_request' # 残業申請モーダル
+        # PATCH /users/:user_id/attendances/:id/update_overtime_request
+        patch 'update_overtime_request' # 残業申請モーダル 更新
+      end
+    end
   end
 end
