@@ -30,7 +30,7 @@ Rails.application.routes.draw do
       get 'working_employees'
     end
 
-    
+    #上長モーダルシリーズスペース
 
     resources :attendances, only: :update do
       member do
