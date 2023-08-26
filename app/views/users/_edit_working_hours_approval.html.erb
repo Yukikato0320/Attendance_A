@@ -58,17 +58,15 @@
                     <td><%= d.check_box :change_working_hours, {}, "true", "false" %></td>
                     <td><%= link_to '確認', attendance_confirmation_user_path(day.user_id), class: "btn btn-primary" %></td>
                   </tr>
-                 </tbody>
-                 <% end %>
+                </tbody>
+                <% end %>
                 <% end %>
               <% end %>
           </table>
-        
-         <% end %>
+        <% end %>
         <div class="center">
           <%= f.submit "変更を送信する", class: "btn btn-primary btn-block" %>
         </div>
-        
       <% end %>
     </div>
   </div>

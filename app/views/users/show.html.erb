@@ -7,7 +7,7 @@
         <td>
         <!-- 前月へのリンク -->
         <%= link_to "⇦ 前月へ", user_path(date: @first_day.prev_month), class: "btn btn-primary" %>
-          &emsp; 【<%= l(@first_day,format: :middle) %>】時間管理表 &emsp;
+          &emsp; 【<%= l(@first_day,format: :middle) %>】】勤怠管理表 &emsp;
         <!-- 次月へのリンク -->
         <%= link_to "次月へ ⇨", user_path(date: @first_day.next_month), class: "btn btn-primary" %>
         </td>
