@@ -24,7 +24,43 @@
     </tr>
   </table>
 </div>
-<!-- ボタン類を表示する部分 -->
+
+<%# 上長ならば以下の該当する項目を表示//管理表上部へ %>
+<% if @user.superior? %>
+  <div>
+    <ul style="list-style: none;">
+
+      <% if @count_monthly_request >= 1 %>
+        <li>
+          <%= link_to '【所属長承認申請のお知らせ】', attendances_edit_monthly_approval_user_path(@user), remote: true, :style=>"color:red;" %>
+          <b style="color: #F00; border: 1px solid #F00"><%= @count_monthly_request %>件のお知らせがあります</b>
+        </li>
+      <% else %>
+        <li>【所属長承認申請のお知らせ】</li>
+      <% end %>
+
+      <% if @count_working_hours_request >= 1 %>
+        <li>
+          <%= link_to '【勤怠変更申請のお知らせ】', user_edit_working_hours_approval_path(@user), remote: true, :style=>"color:red;" %>
+          <b style="color: #F00; border: 1px solid #F00"><%= @count_working_hours_request %>件のお知らせがあります</b>
+        </li>
+      <% else %>
+        <li>【勤怠変更申請のお知らせ】</li>
+      <% end %>
+
+      <% if @count_overtime_request >= 1 %>
+        <li>
+          <%= link_to '【残業申請のお知らせ】', user_edit_overtime_approval_path(@user), remote: true, :style=>"color:red;" %>
+          <b style="color: #F00; border: 1px solid #F00"><%= @count_overtime_request %>件のお知らせがあります</b>
+        </li>
+      <% else %>
+        <li>【残業申請のお知らせ】</li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<!-- ボタン類を表示する部分/青色ボタン/管理表上部へ -->
 <div class="btn-users-show">
   <!-- 勤怠を編集するリンク -->
   <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary"%>

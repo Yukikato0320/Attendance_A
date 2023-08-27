@@ -33,6 +33,64 @@ class UsersController < ApplicationController
 
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count
+
+    @attendance = @user.attendances.find_by(worked_on: @first_day)
+
+    # 上長　申請中をカウントして赤字で表示する
+    # 上長　自身宛ての申請があり、かつステータスが申請中のときに、その数をカウントする
+    if @user.superior?
+      @count_monthly_request = Attendance.where(selector_monthly_request: @user.employee_number,
+                                                status_monthly: '申請中').count
+      @count_working_hours_request = Attendance.where(selector_working_hours_request: @user.employee_number,
+                                                      status_working_hours: '申請中').count
+      @count_overtime_request = Attendance.where(selector_overtime_request: @user.employee_number,
+                                                status_overtime: '申請中').count
+    end
+  # 月初日を取得。
+    # 申請者が1ヶ月申請を押したときに月初日に「申請中」が入る
+    # 上長が「なし」「申請中」「否認」「承認」のどれかを選択することでstatusが変更される
+    @first_day_monthly_request = @user.attendances.find_by(worked_on: @first_day)
+
+    # status_monthlyの値に基づいて、ステータスを更新
+    case @first_day_monthly_request.status_monthly
+    when '申請中'
+      # selector_monthly_requestの値に応じてステータスを更新
+      if @first_day_monthly_request.selector_monthly_request == 201
+        @status_updated = '所属長 上長1に申請中'
+      else
+        @first_day_monthly_request.selector_monthly_request == 202
+        @status_updated = '所属長 上長2に申請中'
+      end
+    when '承認'
+      # selector_monthly_requestの値に応じてステータスを更新
+      if @first_day_monthly_request.selector_monthly_request == 201
+        @status_updated = '所属長 上長1に承認されました'
+      else
+        @first_day_monthly_request.selector_monthly_request == 202
+        @status_updated = '所属長 上長2に承認されました'
+      end
+    when '否認'
+      # selector_monthly_requestの値に応じてステータスを更新
+      if @first_day_monthly_request.selector_monthly_request == 201
+        @status_updated = '所属長 上長1に否認されました'
+      else
+        @first_day_monthly_request.selector_monthly_request == 202
+        @status_updated = '所属長 上長2に否認されました'
+      end
+    else
+      @status_updated = '所属長 承認 未送信'
+    end
+
+# respond_to ブロック開始
+    respond_to do |format|
+      # format.html の処理を記述
+      format.html do
+      end
+      # CSV フォーマットの処理を記述
+      format.csv do
+        send_data render_to_string, filename: "#{@user.name}さんの勤怠一覧.csv", type: :csv
+      end
+    end
   end
 
 
@@ -87,6 +145,107 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
+  # 残業申請への返答 表示
+  def edit_overtime_approval
+    @user = User.find(params[:user_id]) # @userは自身(上長1または上長2)
+    # @users = User.joins(:attendances).group("users.id").where(attendances: { selector_overtime_request: @user.employee_number, status_overtime: "申請中" } )
+    @attendances = Attendance.where(selector_overtime_request: @user.employee_number,
+                                    status_overtime: '申請中').order(user_id: 'ASC').group_by(&:user_id)
+  end
+
+# 残業申請への返答 更新
+  def update_overtime_approval
+    @user = User.find(params[:user_id])
+
+    ActiveRecord::Base.transaction do
+      overtime_approval_params.each do |id, item|
+        # 「変更」をチェックしたら以下を実行　「変更」にチェックが無い場合は何もしないまま終了
+        next unless item[:change_overtime] == 'true'
+
+        attendance = Attendance.find(id)
+        # 以下で、form_withには入っていない属性をitemに入れると、ストロングパラメーターで許可された属性のみupdate_attributes!(item)でデータベースに保存される
+        # itemに入っていない属性はupdate_attributes!(item)ではデータベースには保存されない
+        if item[:status_overtime] == '承認'
+          if attendance.estimated_overtime_hours.present?
+            item[:estimated_overtime_hours] =
+              attendance.estimated_overtime_hours
+          end
+          item[:next_day_overtime] = attendance.next_day_overtime if attendance.next_day_overtime.present?
+          if attendance.business_process_content.present?
+            item[:business_process_content] =
+              attendance.business_process_content
+          end
+        end
+        # 「なし」を選択すると、parameterの値が全部削除される
+        if item[:status_overtime] == 'なし'
+          item[:status_overtime] = nil
+          attendance.estimated_overtime_hours = nil
+          attendance.next_day_overtime = nil
+          attendance.estimated_overtime_hours = nil
+        end
+        attendance.update_attributes!(item)
+        # if
+      end
+    end
+
+      flash[:success] = '残業申請の内容について更新しました。'
+      redirect_to @user and return
+    rescue ActiveRecord::RecordInvalid
+      flash[:danger] = '無効な入力データがあった為、更新をキャンセルしました。'
+      redirect_to user_edit_overtime_approval_path(@user) and return
+  end
+
+  def edit_working_hours_approval
+    @user = User.find(params[:user_id])
+    # joinsでuserとattendancesを結合させて表示できる。whereでattendancesを絞り込む。
+    @users = User.joins(:attendances).group('users.id').where(attendances: {
+                                                                selector_working_hours_request: @user.employee_number, status_working_hours: '申請中'
+                                                              })
+    @attendances = Attendance.where(selector_working_hours_request: @user.employee_number,
+                                    status_working_hours: '申請中').order(worked_on: 'ASC')
+    @attendances.each do |attendance|
+      attendance.change_working_hours = nil
+    end
+  end
+
+  def update_working_hours_approval
+    # パラメーターの情報を更新する
+    ActiveRecord::Base.transaction do
+    # itemにはform_withで入力されたparamsの値が入っている
+    working_hours_approval_params.each do |id, item|
+      # 以下で、form_withには入っていない属性をitemに入れると、ストロングパラメーターで許可された属性のみupdate_attributes!(item)でデータベースに保存される
+      # itemに入っていない属性はupdate_attributes!(item)ではデータベースには保存されない
+      next unless item[:change_working_hours] == 'true'
+
+      # attendanceにはidから見つけたattendanceのデータベースの値が入る
+      attendance = Attendance.find(id)
+      if item[:status_working_hours] == '承認'
+        # 以下の値をitemに新たに追加する
+        item[:started_at_before] = attendance.started_at if attendance.started_at_before.blank?
+        item[:finished_at_before] = attendance.finished_at if attendance.finished_at_before.blank?
+        item[:started_at] = attendance.started_at_edited
+        item[:finished_at] = attendance.finished_at_edited
+      end
+      # 「なし」を選択すると、parameterの値が全部削除される
+      if item[:status_working_hours] == 'なし'
+        # パラメーターに残っている以下の値を削除する
+        item[:status_working_hours] = nil
+        attendance.started_at_edited = nil
+        attendance.finished_at_edited = nil
+        attendance.note = nil
+        attendance.selector_working_hours_request = nil
+      end
+      attendance.update_attributes!(item)
+    end
+  end
+
+  flash[:success] = '勤怠情報の変更について更新しました。'
+    redirect_to user_url(params[:user_id]) and return
+  rescue ActiveRecord::RecordInvalid
+    flash[:danger] = '無効なデータがあったため、更新をキャンセルしました'
+    redirect_to user_url(params[:user_id]) and return
+  end
+
 
   def attendance_confirmation
     @worked_sum = @attendances.where.not(started_at: nil).count
@@ -114,12 +273,23 @@ class UsersController < ApplicationController
   private
 
 
-    def user_params
-      params.require(:user).permit(:name, :email, :department, :password, :password_confirmation)
-    end
+  def overtime_approval_params
+    params.require(:user).permit(attendances: %i[status_overtime change_overtime estimated_overtime_hours
+                                                next_day_overtime business_process_content])[:attendances]
+  end
+
+  def working_hours_approval_params
+    params.require(:user).permit(attendances: %i[started_at_before finished_at_before started_at finished_at
+                                                started_at_edited finished_at_edited status_working_hours change_working_hours])[:attendances]
+  end
+
+  def user_params
+    params.require(:user).permit(:name, :email, :department, :password, :password_confirmation)
+  end
 
 
-    def basic_info_params
-      params.require(:user).permit(:department, :basic_time, :work_time)
-    end
+  def basic_info_params
+    params.require(:user).permit(:department, :basic_time, :work_time)
+  end
+
 end
