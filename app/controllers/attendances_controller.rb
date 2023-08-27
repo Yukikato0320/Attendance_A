@@ -52,6 +52,33 @@ class AttendancesController < ApplicationController
     @attendance = Attendance.find(params[:id])
   end
 
+  # 残業申請 提出
+  def update_overtime_request
+    @user = User.find(params[:user_id])
+    @attendance = Attendance.find(params[:id])
+
+    if overtime_request_params[:next_day_overtime] == 'false' && (overtime_request_params[:estimated_overtime_hours].to_i < @user.designated_work_end_time.hour)
+      flash[:danger] = '無効な入力データがあった為、更新をキャンセルしました。'
+      redirect_to @user and return
+    end
+
+    if overtime_request_params[:next_day_overtime] == 'true' && (overtime_request_params[:estimated_overtime_hours].to_i > @user.designated_work_end_time.hour)
+      flash[:danger] = '無効な入力データがあった為、更新をキャンセルしました。'
+      redirect_to @user and return
+    end
+
+    if overtime_request_params[:estimated_overtime_hours].present? && overtime_request_params[:selector_overtime_request].blank?
+      flash[:danger] = '無効な入力データがあった為、更新をキャンセルしました。'
+      redirect_to @user and return
+    end
+
+    flash[:success] = "#{@user.name}の残業申請が完了しました。" if @attendance.update_attributes  (overtime_request_params)
+    redirect_to @user and return
+  end
+
+
+
+
   private
 
   # 1ヶ月分の勤怠情報を扱います。
