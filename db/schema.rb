@@ -28,9 +28,9 @@ ActiveRecord::Schema.define(version: 20230801165731) do
     t.string "business_process_content"
     t.boolean "next_day_overtime"
     t.boolean "next_day_working_hours"
-    t.integer "selector_overtime_request"
-    t.integer "selector_working_hours_request"
-    t.integer "selector_monthly_request"
+    t.integer "selector_overtime_request"  #残業申請の 指示者確認
+    t.integer "selector_working_hours_request"  #勤怠変更の 指示者確認
+    t.integer "selector_monthly_request"  #1ヶ月分勤怠変更の 指示者確認
     t.date "date_monthly_request"
     t.boolean "change_overtime"
     t.boolean "change_working_hours"
