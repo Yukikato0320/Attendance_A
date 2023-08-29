@@ -76,14 +76,82 @@ class AttendancesController < ApplicationController
     redirect_to @user and return
   end
 
+  # 画面右下の1ヶ月申請ボタンを押したときのアクション
+  def update_monthly_request
+    # @userはset_userでセットしている
+    @attendance = @user.attendances.where(worked_on: params[:attendance][:date_monthly_request])
 
+    # 上長を選択したら申請が可能 (selector_monthly_request = 1ヶ月の勤怠変更の指示者確認[routes])
+    if monthly_request_params[:selector_monthly_request].present?
+      @attendance.update(monthly_request_params)
+      flash[:success] = "#{@user.name}の1ヶ月分の勤怠情報を申請しました。"
+    else
+      flash[:danger] = '上長を選択して下さい。'
+    end
+    redirect_to @user
+  end
 
+  def edit_monthly_approval
+    # 上長をパラメーターから取得する
+    @user = User.find(params[:id]) # 上長
+    @users = User.joins(:attendances).group('users.id').where(attendances: {
+                                                                selector_monthly_request: @user.employee_number, status_monthly: '申請中'
+                                                              })
+    # 上長のIDと同じ番号のattendance.selector_monthly_requestを取得する
+    @attendances = Attendance.where(selector_monthly_request: @user.employee_number,
+                                    status_monthly: '申請中').order(worked_on: 'ASC')
+
+    @attendances.each do |attendance|
+      attendance.change_monthly = nil
+    end
+  end
+
+  def update_monthly_approval
+    ActiveRecord::Base.transaction do
+      monthly_approval_params.each do |id, item|
+        next unless item[:change_monthly] == 'true'
+
+        attendance = Attendance.find(id)
+        attendance.update_attributes!(item)
+      end
+      flash[:success] = '1ヶ月分の勤怠情報を更新しました。'
+      redirect_to user_url(params[:id]) and return
+    end
+  rescue ActiveRecord::RecordInvalid
+    flash[:danger] = '無効なデータがあったため、更新をキャンセルしました'
+    redirect_to user_url(params[:id]) and return
+  end
 
   private
 
-  # 1ヶ月分の勤怠情報を扱います。
+  # ユーザー1名で単数の勤怠を更新する場合はこの書き方で
+  def overtime_request_params
+    params.require(:attendance).permit(:estimated_overtime_hours, :next_day_overtime, :business_process_content,
+                                      :selector_overtime_request, :status_overtime)
+  end
+
+  def monthly_request_params
+    params.require(:attendance).permit(:date_monthly_request, :status_monthly, :selector_monthly_request)
+  end
+
+  def monthly_approval_params
+    params.require(:user).permit(attendances: %i[status_monthly change_monthly])[:attendances]
+  end
+
+  # 1ヶ月分の勤怠情報を扱います。(勤怠Bよりそのまま引き継ぎ部)
   def attendances_params
     params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+  end
+
+# beforeフィルター
+
+  # 管理権限者、または現在ログインしているユーザーを許可します。
+  def admin_or_correct_user
+    @user = User.find(params[:user_id]) if @user.blank?
+    return if current_user?(@user) || current_user.admin?
+
+    flash[:danger] = '編集権限がありません。'
+    redirect_to(root_url)
   end
 
 end

@@ -6,7 +6,7 @@
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-      
+
     <div class="modal-body">
       <%= form_with(model: @user, url: attendances_update_monthly_approval_user_path(@user), method: :patch, local: true) do |f| %>
         <% @users.each do |user| %>
@@ -23,7 +23,7 @@
             </thead>
             <% @attendances.each do |day| %>
               <%= f.fields_for "attendances[]", day do |d| %>
-              
+
                 <% if day.user_id == user.id %>
                   <tbody>
                     <tr class="center">
