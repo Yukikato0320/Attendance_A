@@ -28,9 +28,9 @@ ActiveRecord::Schema.define(version: 20230801165731) do
     t.string "business_process_content"
     t.boolean "next_day_overtime"
     t.boolean "next_day_working_hours"
-    t.integer "selector_overtime_request"  #残業申請の 指示者確認
-    t.integer "selector_working_hours_request"  #勤怠変更の 指示者確認
-    t.integer "selector_monthly_request"  #1ヶ月分勤怠変更の 指示者確認
+    t.integer "selector_overtime_request"
+    t.integer "selector_working_hours_request"
+    t.integer "selector_monthly_request"
     t.date "date_monthly_request"
     t.boolean "change_overtime"
     t.boolean "change_working_hours"
@@ -60,15 +60,15 @@ ActiveRecord::Schema.define(version: 20230801165731) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "department"
-    t.datetime "basic_time", default: "2023-08-19 23:00:00"
-    t.datetime "work_time", default: "2023-08-19 22:30:00"
+    t.datetime "basic_time", default: "2023-08-29 23:00:00"
+    t.datetime "work_time", default: "2023-08-29 22:30:00"
     t.string "affiliation"
     t.integer "employee_number"
     t.string "uid"
     t.boolean "superior", default: false
-    t.datetime "designated_work_start_time", default: "2023-08-20 00:00:00"
-    t.datetime "designated_work_end_time", default: "2023-08-20 09:00:00"
-    t.datetime "basic_work_time", default: "2023-08-19 23:00:00"
+    t.datetime "designated_work_start_time", default: "2023-08-30 00:00:00"
+    t.datetime "designated_work_end_time", default: "2023-08-30 09:00:00"
+    t.datetime "basic_work_time", default: "2023-08-29 23:00:00"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
