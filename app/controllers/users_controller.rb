@@ -270,6 +270,10 @@ class UsersController < ApplicationController
   end
 
 
+  def edit_basic_info2
+  end
+
+
   private
 
 
