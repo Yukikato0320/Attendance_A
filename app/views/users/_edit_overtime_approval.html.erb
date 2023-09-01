@@ -4,12 +4,12 @@
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
-      
+
       <%= form_with(model: @user, url: user_update_overtime_approval_path(@user), method: :patch, local: true) do |f| %>
         <% @attendances.each do |user_id, attendances| %>
           <% attendance_user = User.find(user_id) %>
           <p class="center">【<%= attendance_user.name %>からの残業申請】</p>
-              
+
             <table class="table table-bordered table-striped table-condensed">
               <thead>
                 <tr>
@@ -24,3 +24,34 @@
                   <th class="center">勤怠を確認する</th>
                 </tr>
               </thead>
+
+              <% attendances.each do |attendance| %>
+                <%# if day.user_id == user.id %>
+                  <%= f.fields_for "attendances[]", attendance do |attn| %>
+                    <tbody>
+                      <tr class="center">
+                        <td><%= l(attendance.worked_on, format: :short) %></td>
+                        <td><%= $days_of_the_week[attendance.worked_on.wday] %></td>
+                        <td><%= format_basic_info(attendance.estimated_overtime_hours) %></td>
+                        <td><%= format_basic_info(attendance_user.designated_work_end_time) %></td>
+                        <%# 時間外時間 %>
+                        <td><%= working_times_next_day(attendance_user.designated_work_end_time, attendance.estimated_overtime_hours, attendance.next_day_overtime) %></td>
+                        <td><%= attendance.business_process_content %></td>
+                        <td><%= attn.select :status_overtime, [['申請中'], ['承認'], ['否認'], ['なし']], { include_blank: false, selected: 1 } %></td>
+                        <td><%= attn.check_box :change_overtime, {}, "true", "false" %></td>
+                        <td><%= link_to '確認', attendance_confirmation_user_path(attendance_user), class: "btn btn-primary" %></td>
+                      </tr>
+                    </tbody>
+                  <% end %>
+                <%# end %>
+              <% end %>
+            </table>
+        <% end %>
+
+          <div class="center">
+            <%= f.submit "変更を送信する", class: "btn btn-primary btn-block" %>
+          </div>
+      <% end %>
+    </div>
+  </div>
+</div>
