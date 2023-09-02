@@ -30,7 +30,7 @@
                   <%= f.fields_for "attendances[]", attendance do |attn| %>
                     <tbody>
                       <tr class="center">
-                        <%# 出勤日を短い形式で表示 %>
+                        <%# 出勤日を短い形式で表示 ※ 日付データを短い形式で表示するために、lメソッドが使用。ローカライゼーション(国際化)を使用することで、異なる言語や地域のユーザーに対応した日付表示が可能 %>
                         <td><%= l(attendance.worked_on, format: :short) %></td>
                         <%# 出勤日の曜日を表示 %>
                         <td><%= $days_of_the_week[attendance.worked_on.wday] %></td>
