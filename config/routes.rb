@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       get 'edit_basic_info'
       # PATCH	/users/:id/update_basic_info 基本情報の更新
       patch 'update_basic_info'
+
       # GET /users/:id/attendances/edit_one_month ユーザーに紐付いた勤怠情報の集合(1ヶ月分)を編集
       get 'attendances/edit_one_month'
       # PATCH /users/:id/attendances/update_one_month ユーザーに紐付いた勤怠情報の集合(1ヶ月分)を更新
