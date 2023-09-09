@@ -38,15 +38,15 @@ class AttendancesController < ApplicationController
       end
     end
 
-    flash[:success] = "1ヶ月分の勤怠情報を更新しました。" #トランザクションが正常に稼働したら出る。
+    flash[:success] = "1ヶ月分の勤怠情報を更新しました。" #トランザクションが正常に稼働したら、出現。
     redirect_to user_url(date: params[:date])
-  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。" #トランザクションが失敗したら出る。
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐。
+    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。" #トランザクションが失敗したら、出現。
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
 
 
-  # 残業申請 表示
+  # 残業申請 表示/編集
   def edit_overtime_request
     @user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
@@ -76,7 +76,7 @@ class AttendancesController < ApplicationController
     redirect_to @user and return
   end
 
-  # 画面右下の1ヶ月申請ボタンを押したときのアクション
+  # 画面右下の1ヶ月申請ボタンを押したときのアクション(1ヶ月勤怠変更)
   def update_monthly_request
     # @userはset_userでセットしている
     @attendance = @user.attendances.where(worked_on: params[:attendance][:date_monthly_request])
@@ -93,30 +93,37 @@ class AttendancesController < ApplicationController
 
   def edit_monthly_approval
     # 上長をパラメーターから取得する
+    # パラメーターから指定されたユーザーIDに対応するユーザーオブジェクトを取得し、@userに代入
     @user = User.find(params[:id]) # 上長
+    # 上長への申請中の、1ヶ月勤怠変更承認リクエストを取得する
     @users = User.joins(:attendances).group('users.id').where(attendances: {
                                                                 selector_monthly_request: @user.employee_number, status_monthly: '申請中'
                                                               })
-    # 上長のIDと同じ番号のattendance.selector_monthly_requestを取得する
+    # 上長のIDと同じ番号のattendance.selector_monthly_requestを持つ勤怠レコードを取得し、申請中の1ヶ月勤怠変更承認ステータスで昇順に並べ替える
     @attendances = Attendance.where(selector_monthly_request: @user.employee_number,
                                     status_monthly: '申請中').order(worked_on: 'ASC')
-
+    # 取得した勤怠レコードの各レコードに対して、change_monthlyフィールドをnullに設定する
     @attendances.each do |attendance|
       attendance.change_monthly = nil
     end
   end
 
   def update_monthly_approval
+    #トランジャクションを開始。トランザクション内の操作はすべて成功するか失敗するかのいずれかで、一括して処理。
     ActiveRecord::Base.transaction do
+      # パラメータから送信された1ヶ月勤怠変更承認情報を処理
       monthly_approval_params.each do |id, item|
+        # "change_monthly" フィールドが "true" でない場合は処理をスキップ。
         next unless item[:change_monthly] == 'true'
 
+        # 勤怠レコードを特定し、送信された情報で更新
         attendance = Attendance.find(id)
         attendance.update_attributes!(item)
       end
       flash[:success] = '1ヶ月分の勤怠情報を更新しました。'
       redirect_to user_url(params[:id]) and return
     end
+  # トランザクション内での操作に失敗した場合、無効なデータがあったことを示すエラーメッセージを設定し、ユーザーの詳細ページにリダイレクト。
   rescue ActiveRecord::RecordInvalid
     flash[:danger] = '無効なデータがあったため、更新をキャンセルしました'
     redirect_to user_url(params[:id]) and return
