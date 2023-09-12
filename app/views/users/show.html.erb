@@ -110,7 +110,6 @@
       <% @attendances.each do |day| %>
 
       <tr>
-        
         <!-- 残業申請ボタン/仮/本:edit_overtime_request_user_attendance_path -->
         <td><%= link_to '残業申請', edit_overtime_request_user_attendance_path(@user, day), remote: true, class: "btn btn-primary" %></td>
 
@@ -147,8 +146,38 @@
         </td>
         <!-- 備考欄 -->
         <td><%= day.note %></td>
-
-
+        <%# 終了予定時間 %>
+        <td><%= l(day.estimated_overtime_hours, format: :hour) if day.estimated_overtime_hours.present? %></td>
+        <td><%= l(day.estimated_overtime_hours, format: :min) if day.estimated_overtime_hours.present? %></td>
+        <%# 時間外時間 %>
+        <td><%= working_times_next_day(@user.designated_work_end_time, day.estimated_overtime_hours, day.next_day_overtime) if day.estimated_overtime_hours.present? %></td>
+        <td><%= day.business_process_content %></td>
+        <td>
+          <div>
+            <ul style="list-style: none;">
+              <% if day.status_overtime == '承認' %>
+                <li>残業は承認されました</li>
+              <% elsif day.status_overtime == '否認' %>
+                <li>残業は否認されました</li>
+              <% elsif day.selector_overtime_request == 201 %>
+                <li>上長1に残業を申請中</li>
+              <% elsif day.selector_overtime_request == 202 %>
+                <li>上長2に残業を申請中</li>
+              <% end %>
+            </ul>
+            <ul style="list-style: none;">
+              <% if day.status_working_hours == '承認' %>
+                <li>勤怠変更は承認されました</li>
+              <% elsif day.status_working_hours == '否認' %>
+                <li>勤怠変更は否認されました</li>
+              <% elsif day.selector_working_hours_request == 201 %>
+                <li>上長1に勤怠変更を申請中</li>
+              <% elsif day.selector_working_hours_request == 202 %>
+                <li>上長2に勤怠変更を申請中</li>
+              <% end %>
+            </ul>
+          </div>
+        </td>
       </tr>
       <% end %>
     </tbody>
@@ -157,18 +186,31 @@
     <tfoot>
       <!--rowspan:縦連結, colspan: 横連結-->
       <tr>
-        <td colspan="2">累計日数</td>
-        <td colspan="6">総合勤務時間</td>
-        <td colspan="2">累計在社時間</td>
-      </tr>
-      <tr>
-        <td colspan="2"><%= @attendances.count %></td>
-        <td colspan="6"><%= format_basic_info(@user.work_time).to_f * @worked_sum %></td>
-        <td colspan="2"><%= format("%.2f", @total_working_times.to_f) %></td>
+        <td colspan="9"></td>
+        <td><strong>累計在社時間</strong><br>
+            <%= format("%.2f", @total_working_times.to_f) %></td>
+        <td colspan="5"></td>
+        <td>
+          <%# 1ヶ月所属長承認 %>
+          <%= form_with(model: @attendance, url: attendances_update_monthly_request_user_path(@user), method: :patch, local: true) do |f| %>
+            <ul style="list-style: none;">
+              <li><%= @status_updated %></li>
+            </ul>
+            <%= f.hidden_field :date_monthly_request, :value => @first_day %>
+            <%= f.hidden_field :status_monthly, :value => "申請中" %>
+            <% if @user.employee_number == 201 %>
+              <%= f.select :selector_monthly_request, { '上長2': 202 }, { prompt: "上長を選択して下さい" }, { class: "form-control" } %>
+            <% elsif @user.employee_number == 202 %>
+              <%= f.select :selector_monthly_request, { '上長1': 201 }, { prompt: "上長を選択して下さい" }, { class: "form-control" } %>
+            <% else %>
+              <%= f.select :selector_monthly_request, [['上長1', 201], ['上長2', 202]], { prompt: "上長を選択して下さい" }, { class: "form-control" } %>
+            <% end %>
+            <%= f.submit '申請', class: "btn btn-primary btn-block" %>
+          <% end %>
+        </td>
       </tr>
     </tfoot>
-    </table>
-</div>
+  </table>
 </div>
 
 <!--以下モーダルウインドウ表示において-->
