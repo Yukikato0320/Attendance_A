@@ -14,7 +14,7 @@
         <div class="col-md-8 col-md-offset-2">
           <%= form_with(model: @branch_office, url: branch_office_path,
                                               local: true, method: :patch) do |f| %>
-                      
+
             <%= f.label :branch_office_number, "拠点番号", class: "label-#{yield(:class_text)}" %>
             <%= f.text_field :branch_office_number, class: "form-control" %>
             <%= f.label :branch_office_name, "拠点名",class: "label-#{yield(:class_text)}" %>
@@ -25,7 +25,7 @@
             <div class="center">
               <%= f.submit yield(:button_text), class: "btn btn-primary form-control" %>
             </div>
-          
+
           <% end %>
         </div>
       </div>
