@@ -6,6 +6,7 @@ class AttendancesController < ApplicationController
 
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
 
+
   def update
     @user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
@@ -26,8 +27,10 @@ class AttendancesController < ApplicationController
     redirect_to @user
   end
 
+
   def edit_one_month
   end
+
 
   def update_one_month
     ActiveRecord::Base.transaction do # トランザクションを開始します。
@@ -51,6 +54,7 @@ class AttendancesController < ApplicationController
     @user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
   end
+
 
   # 残業申請 提出
   def update_overtime_request
@@ -76,6 +80,7 @@ class AttendancesController < ApplicationController
     redirect_to @user and return
   end
 
+
   # 画面右下の1ヶ月申請ボタンを押したときのアクション(1ヶ月勤怠変更)
   def update_monthly_request
     # @userはset_userでセットしている
@@ -90,6 +95,7 @@ class AttendancesController < ApplicationController
     end
     redirect_to @user
   end
+
 
   def edit_monthly_approval
     # 上長をパラメーターから取得する
@@ -107,6 +113,7 @@ class AttendancesController < ApplicationController
       attendance.change_monthly = nil
     end
   end
+
 
   def update_monthly_approval
     #トランジャクションを開始。トランザクション内の操作はすべて成功するか失敗するかのいずれかで、一括して処理。
@@ -129,7 +136,9 @@ class AttendancesController < ApplicationController
     redirect_to user_url(params[:id]) and return
   end
 
+
   private
+
 
   # ユーザー1名で単数の勤怠を更新する場合はこの書き方で
   def overtime_request_params
@@ -137,20 +146,25 @@ class AttendancesController < ApplicationController
                                       :selector_overtime_request, :status_overtime)
   end
 
+
   def monthly_request_params
     params.require(:attendance).permit(:date_monthly_request, :status_monthly, :selector_monthly_request)
   end
 
+
   def monthly_approval_params
     params.require(:user).permit(attendances: %i[status_monthly change_monthly])[:attendances]
   end
+
 
   # 1ヶ月分の勤怠情報を扱います。(勤怠Bよりそのまま引き継ぎ部)
   def attendances_params
     params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
   end
 
+
 # beforeフィルター
+
 
   # 管理権限者、または現在ログインしているユーザーを許可します。
   def admin_or_correct_user

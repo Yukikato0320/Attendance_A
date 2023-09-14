@@ -1,4 +1,5 @@
 module AttendancesHelper
+
   # Attendanceオブジェクトの状態を判定して返すメソッド
   def attendance_state(attendance)
     # 受け取ったAttendanceオブジェクトが当日と一致するか評価します。
@@ -12,11 +13,13 @@ module AttendancesHelper
     return false
   end
 
+
   # Attendanceオブジェクトの状態を判定して返すメソッド
   def attendance_state?(attendance)
     # 受け取ったAttendanceオブジェクトが当日と一致するか評価する
     Date.current == attendance.worked_on
   end
+
 
   # 出勤時間と退勤時間を受け取り、在社時間を計算して返すメソッド
   def working_times(start, finish)
@@ -25,6 +28,7 @@ module AttendancesHelper
     # ※ %.2f = 小数点以下2桁まで表示することを意味
     format("%.2f", (((finish - start) / 60) / 60.0))
   end
+
 
   # 出勤時間と退勤時間を受け取り、翌日までの在社時間を計算して返すメソッド
   def working_times_next_day(start, finish, next_day)
@@ -35,11 +39,13 @@ module AttendancesHelper
     end
   end
 
+
   # 時刻を2桁の文字列でフォーマットするメソッド
   def format_hour(time)
     # 2d == two digits 2桁
     format('%.2d', time.hour)
   end
+
 
   # 分を2桁の文字列でフォーマットするメソッド
   def format_min(time)

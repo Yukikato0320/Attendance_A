@@ -145,6 +145,7 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
+
   # 残業申請への返答 表示
   def edit_overtime_approval
     @user = User.find(params[:user_id]) # @userは自身(上長1または上長2)
@@ -152,6 +153,7 @@ class UsersController < ApplicationController
     @attendances = Attendance.where(selector_overtime_request: @user.employee_number,
                                     status_overtime: '申請中').order(user_id: 'ASC').group_by(&:user_id)
   end
+
 
 # 残業申請への返答 更新
   def update_overtime_approval
@@ -195,6 +197,7 @@ class UsersController < ApplicationController
       redirect_to user_edit_overtime_approval_path(@user) and return
   end
 
+
   def edit_working_hours_approval
     @user = User.find(params[:user_id])
     # joinsでuserとattendancesを結合させて表示できる。whereでattendancesを絞り込む。
@@ -207,6 +210,7 @@ class UsersController < ApplicationController
       attendance.change_working_hours = nil
     end
   end
+
 
   def update_working_hours_approval
     # パラメーターの情報を更新する
@@ -282,10 +286,12 @@ class UsersController < ApplicationController
                                                 next_day_overtime business_process_content])[:attendances]
   end
 
+
   def working_hours_approval_params
     params.require(:user).permit(attendances: %i[started_at_before finished_at_before started_at finished_at
                                                 started_at_edited finished_at_edited status_working_hours change_working_hours])[:attendances]
   end
+
 
   def user_params
     params.require(:user).permit(:name, :email, :department, :password, :password_confirmation)
