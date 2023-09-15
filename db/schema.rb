@@ -13,21 +13,21 @@
 ActiveRecord::Schema.define(version: 20230801165731) do
 
   create_table "attendances", force: :cascade do |t|
-    t.date "worked_on"
-    t.datetime "started_at"
-    t.datetime "finished_at"
-    t.string "note"
-    t.integer "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "started_at_before"
-    t.datetime "finished_at_before"
-    t.datetime "started_at_edited"
-    t.datetime "finished_at_edited"
-    t.datetime "estimated_overtime_hours"
-    t.string "business_process_content"
-    t.boolean "next_day_overtime"
-    t.boolean "next_day_working_hours"
+    t.date "worked_on"  # 勤務日
+    t.datetime "started_at"  # 出社時間
+    t.datetime "finished_at"  # 退社時間
+    t.string "note"  # 備考
+    t.integer "user_id"  # ユーザーID
+    t.datetime "created_at", null: false  # 作成日時
+    t.datetime "updated_at", null: false  # 更新日時
+    t.datetime "started_at_before"  # 出社時間(変更前)
+    t.datetime "finished_at_before"  # 退社時間(変更前)
+    t.datetime "started_at_edited"  # 出社時間(変更後)
+    t.datetime "finished_at_edited"  # 退社時間(変更後)
+    t.datetime "estimated_overtime_hours"  # 残業申請(終了予定時間)-予想残業時間
+    t.string "business_process_content"  # 残業申請(業務処理内容)
+    t.boolean "next_day_overtime"  # 残業申請(翌日)
+    t.boolean "next_day_working_hours"  # 勤怠編集画面(翌日)
     t.integer "selector_overtime_request"
     t.integer "selector_working_hours_request"
     t.integer "selector_monthly_request"
