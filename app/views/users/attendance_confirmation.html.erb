@@ -6,24 +6,20 @@
       【 <%= l(@first_day, format: :middle) %> 】勤怠管理表
       </td>
       <td>
-      指定勤務開始時間
-      <br>
-      指定勤務終了時間
+      指定勤務開始時間 <%= format_basic_info(@user.designated_work_start_time) %><br>
+      指定勤務終了時間 <%= format_basic_info(@user.designated_work_end_time) %>
       </td>
-      <td>基本勤務時間</td>
-      <td>月初日</td>
+      <td>基本勤務時間 <% format_basic_info(@user.basic_work_time) %></td>
+      <td>月初日 <%= l(@first_day, format: :short) %></td>
     </tr>
 
     <tr>
-      <td>所属</td>
-      <td>名前</td>
-      <td>出勤日数</td>
-      <td>月末日</td>
+      <td>所属 : <%= @user.affiliation.present? ? @user.affiliation : "未所属" %></td>
+      <td>名前 : <%= @user.name %></td>
+      <td>出勤日数 : <%= @work_sum %>日</td>
+      <td>月末日 <%= l(@last_day, format: :short) %></td>
     </tr>
   </table>
-
-
-
 
 
 
@@ -37,7 +33,7 @@
         <th colspan = "5">所定外業務</th>
       </tr>
       <tr>
-        <th rowspam = "2">日付</th>
+        <th rowspan = "2">日付</th></th>
         <th rowspan = "2">曜日</th>
         <th rowspan = "2"></th>
         <th colspan = "3">出社</th>
@@ -64,26 +60,46 @@
     <tbody>
       <% @attendances.each do |day| %>
         <tr>
+          <%# 日時 %>
+          <td><%= l(day.worked_on, format: :short) %></td>
+          <%# 曜日 %>
+          <td><%= $days_of_the_week[day.worked_on.wday] %></td>
           <td></td>
+          <%# 出社時間 %>
+          <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
+          <td><%= l(day.started_at, format: :min) if day.started_at.present? %></td>
           <td></td>
+          <%# 退社時間 %>
+          <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td>
+          <td><%= l(day.finished_at, format: :min) if day.finished_at.present? %></td>
           <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <%# 在社時間 %>
+          <td>
+            <% if day.started_at.present? && day.finished_at.present? %>
+              <%= str_times = woking_times_next_day(day.started_at, day.finished_at, day.next_day_working_hours) %>
+              <%# @total_working_timesに在社時間をループで代入し続ける(表示は下の部分で行う) %>
+              <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
+            <% end %>
+          </td>
+          <%# 備考 %>
+          <td><%= day.note %></td>
+          <%# 終了予定時間 %>
+          <td><%= l(day.estimated_overtime_hours, format: :hour) if day.estimated_overtime_hours.present? %></td>
+          <td><%= l(day.estimated_overtime_hours, format: :min) if day.estimated_overtime_hours.present? %></td>
+          <%# 時間外時間 %>
+          <td><%= working_times_next_day(@user.designated_work_end_time, day.estimated_overtime_hours, day.next_day_overtime) if day.estimated_overtime_hours.present? %></td>
+          <td><%= day.business_process_content %></td>
+
+
+          <% if day.selector_overtime_request == '承認' %>
+            <td>残業承認済み</td>
+          <% elsif day.selector_overtime_request == 2 %>
+            <td>上長1に申請中</td>
+          <% elsif day.selector_overtime_request == 3 %>
+            <td>>上長2に申請中</td>
+          <% else %>
+            <td></td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>
