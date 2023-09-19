@@ -25,6 +25,7 @@
   </table>
 </div>
 
+
 <%# 上長ならば以下の該当する項目を表示//管理表上部へ %>
 <% if @user.superior? %>
   <div>
@@ -60,6 +61,7 @@
   </div>
 <% end %>
 
+
 <!-- ボタン類を表示する部分/青色ボタン/管理表上部へ -->
 <div class="btn-users-show">
   <!-- 勤怠を編集するリンク -->
@@ -69,6 +71,7 @@
   <!-- 勤怠修正ログ(承認済)リンク -->
   <%= link_to '勤怠修正ログ(承認済)', attendance_log_user_path(@user), remote: true, class: "btn btn-primary" %>
 </div>
+
 
 <!-- 勤怠データを表示するためのテーブル -->
 <div>
@@ -104,6 +107,7 @@
         <th>分</th>
       </tr>
     </thead>
+
 
     <tbody>
       <!-- 勤怠データを繰り返し表示 -->
