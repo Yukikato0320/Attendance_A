@@ -153,7 +153,7 @@ class AttendancesController < ApplicationController
 
 
   def monthly_approval_params
-    params.require(:user).permit(attendances: %i[status_monthly change_monthly])[:attendances]
+    params.require(:user).permit(attendances: [:status_monthly, :change_monthly])[:attendances]
   end
 
 

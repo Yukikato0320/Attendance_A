@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
+  # SessionsHelperはどこでも使える
   include SessionsHelper
 
   $days_of_the_week = %w{日 月 火 水 木 金 土}
@@ -36,6 +37,12 @@ class ApplicationController < ActionController::Base
   end
 
 
+  def non_admin_user
+    redirect_to root_url if current_user.admin?
+  end
+
+
+  # 下記勤怠Bからの継承。 勤怠Aでは、上記 non_admin_user としてバリデーションにて置き換え利用。
   def admin_or_correct_user
     @user = User.find(params[:user_id]) if @user.blank?
     unless current_user?(@user) || current_user.admin?
@@ -66,4 +73,22 @@ class ApplicationController < ActionController::Base
     flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください。"
     redirect_to root_url
   end
+
+
+  private
+
+
+  def user_params
+    params.require(:user).permit(:name, :email, :affiliation, :password, :password_confirmation, :uid,
+                                :employee_number, :basic_work_time, :designated_work_start_time, :designated_work_end_time)
+  end
+
+
+  # ユーザー1名で複数の勤怠を更新する場合はこの書き方で。
+  def attendances_params
+    params.require(:user).permit(attendances: %i[started_at finished_at started_at_edited finished_at_edited
+                                                started_at_before finished_at_before note next_day_working_hours selector_working_hours_request status_working_hours selector_monthly_request])[:attendances]
+  end
+
+
 end
