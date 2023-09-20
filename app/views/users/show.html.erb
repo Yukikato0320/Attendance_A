@@ -42,7 +42,7 @@
 
       <% if @count_working_hours_request >= 1 %>
         <li>
-          <%= link_to '【勤怠変更申請のお知らせ】', user_edit_working_hours_approval_path(@user), remote: true, :style=>"color:red;" %>
+          <%= link_to '【勤怠変更申請のお知らせ】', user_path(@user), remote: true, :style=>"color:red;" %>
           <b style="color: #F00; border: 1px solid #F00"><%= @count_working_hours_request %>件のお知らせがあります</b>
         </li>
       <% else %>
