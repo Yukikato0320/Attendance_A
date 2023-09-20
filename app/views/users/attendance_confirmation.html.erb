@@ -76,7 +76,7 @@
           <%# 在社時間 %>
           <td>
             <% if day.started_at.present? && day.finished_at.present? %>
-              <%= str_times = woking_times_next_day(day.started_at, day.finished_at, day.next_day_working_hours) %>
+              <%= str_times = working_times_next_day(day.started_at, day.finished_at, day.next_day_working_hours) %>
               <%# @total_working_timesに在社時間をループで代入し続ける(表示は下の部分で行う) %>
               <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
             <% end %>
