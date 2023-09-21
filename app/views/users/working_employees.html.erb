@@ -1,6 +1,6 @@
 <!-- ページのタイトルを提供 -->
 <% provide(:title, 'List of Employees Currently at Work') %>
-<!-- ヘッダーとして出勤中社員一覧のタイトルを表示 -->
+<!-- ヘッダーとして出勤中社員一覧のタイトルを表示する -->
 <h1>出勤中社員一覧</h1>
 
   <table class="table table-bordered table-striped table-condensed table-status">
@@ -11,17 +11,17 @@
       </tr>
     </thead>
     <tbody>
-      <!-- ユーザー一覧から各ユーザーを取得 -->
+      <!-- ユーザー一覧から各((ユーザー))を取得する。※ userS 複数形-->
       <% @users.each do |user| %>
-        <!-- 各ユーザーの出勤記録を取得 -->
+        <!-- 各ユーザーの((出勤記録))を取得する。→ (出勤しているユーザーを導く。) ※ user 単数形-->
         <% user.attendances.each do |attendance| %>
-          <!-- 今日の日付であり、出勤が記録されており、退勤が記録されていない場合の条件をチェック -->
+          <!-- 今日(付け)の日付であり、+ 出勤が記録されており、+ 退勤が記録されて(いない)場合の条件をチェックする。 -->
           <% if (attendance.worked_on == Date.current) && attendance.started_at.present? && attendance.finished_at.nil? %>
             <!-- テーブルの行を中央寄せで作成 -->
             <tr class="center">
-              <!-- ユーザーの社員番号を表示 -->
+              <!-- ユーザーの社員番号を表示する -->
               <td><%= user.employee_number %></td>
-              <!-- ユーザーの名前を表示 -->
+              <!-- ユーザーの名前を表示する -->
               <td><%= user.name %></td>
             </tr>
           <% end %>

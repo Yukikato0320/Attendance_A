@@ -37,7 +37,6 @@ class AttendancesController < ApplicationController
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
         attendance.update_attributes!(item) #ここでオブジェクトのカラム全体を更新(この時点ではレコードに保存していない)
-        attendance.save!(context: :update_one_month) #ここで↑で更新した値をレコードに保存(同時にバリデーションを実行)
       end
     end
 
