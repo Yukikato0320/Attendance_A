@@ -28,20 +28,25 @@ class Attendance < ApplicationRecord
   end
 
 
-# 全ての記入がなければ、申請(登録)できない。
+# 全て(いずれか)の記入がなければ、申請(登録)できない。
   def all_items_must_be_present_edit_one_month
+    #もし(変更後出勤時間)と(変更後退勤時間)が入力され、(勤怠変更の指示者確認)が未入力ならばー
     if (started_at_edited.present? && finished_at_edited.present?) && selector_working_hours_request.blank?
       errors.add(:started_at_edited, '出社時間と退社時間の両方を入力して、上長を選択してください')
     end
+    #もし(変更後出勤時間)が入力され、(変更後退勤時間)と(勤怠変更の指示者確認)が未入力ならばー
     if (started_at_edited.present? && finished_at_edited.blank?) && selector_working_hours_request.blank?
       errors.add(:started_at_edited, '出社時間と退社時間の両方を入力して、上長を選択してください')
     end
+    #もし(変更後退勤時間)が入力され、(変更後出勤時間)と(勤怠変更の指示者確認)が未入力ならばー
     if (started_at_edited.blank? && finished_at_edited.present?) && selector_working_hours_request.blank?
       errors.add(:started_at_edited, '出社時間と退社時間の両方を入力して、上長を選択してください')
     end
+    #もし(変更後出勤時間)と(勤怠変更の指示者確認)が入力され、(変更後退勤時間)が未入力ならばー
     if (started_at_edited.present? && finished_at_edited.blank?) && selector_working_hours_request.present?
       errors.add(:started_at_edited, '出社時間と退社時間の両方を入力して、上長を選択してください')
     end
+    #(変更後退勤時間)と(勤怠変更の指示者確認)が入力され、(変更後出勤時間)が未入力ならばー 、 申請できない。
     return unless (started_at_edited.blank? && finished_at_edited.present?) && selector_working_hours_request.present?
 
     errors.add(:started_at_edited, '出社時間と退社時間の両方を入力して、上長を選択してください')
