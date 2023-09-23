@@ -122,9 +122,9 @@
         <!-- 曜日 -->
         <td class ="<%= "wday#[day.worked_on.wday]" %>"><%= $days_of_the_week[day.worked_on.wday] %></td>
         <!-- 出社時刻（時） -->
-        <td><%= day.started_at.floor_to(15.minutes).hour if day.started_at.present? %></td>
+        <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
         <!-- 出社時刻（分） -->
-        <td><%= day.started_at.floor_to(15.minutes).min if day.started_at.present? %></td>
+        <td><%= l(day.started_at, format: :min) if day.started_at.present? %></td>
         <!-- 出勤登録ボタン（当日でかつ未出社で） -->
         <td>
           <% if (Date.current == day.worked_on) && day.started_at.nil? %>
@@ -132,9 +132,9 @@
           <% end %>
         </td>
         <!-- 退社時刻（時） -->
-        <td><%= day.finished_at.floor_to(15.minutes).hour if day.finished_at.present? %></td>
+        <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td>
         <!-- 退社時刻（分） -->
-        <td><%= day.finished_at.floor_to(15.minutes).min if day.finished_at.present? %></td>
+        <td><%= l(day.finished_at, format: :min) if day.finished_at.present? %></td>
         <!-- 退勤登録ボタン（当日でかつ出社済みで未退社で） -->
         <td>
           <% if (Date.current == day.worked_on) && day.started_at.present? && day.finished_at.nil? %>
