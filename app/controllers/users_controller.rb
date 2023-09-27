@@ -9,7 +9,6 @@ class UsersController < ApplicationController
 
   def index
     @users = User.paginate(page: params[:page]).search(params[:search]).order(id: "ASC")
-    @search_user = params[:search]
   end
 
 
@@ -289,16 +288,6 @@ class UsersController < ApplicationController
   def working_hours_approval_params
     params.require(:user).permit(attendances: %i[started_at_before finished_at_before started_at finished_at
                                                 started_at_edited finished_at_edited status_working_hours change_working_hours])[:attendances]
-  end
-
-
-  def user_params
-    params.require(:user).permit(:name, :email, :department, :password, :password_confirmation)
-  end
-
-
-  def basic_info_params
-    params.require(:user).permit(:department, :basic_time, :work_time)
   end
 
 end
