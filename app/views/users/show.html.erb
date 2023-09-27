@@ -134,6 +134,7 @@
         <!-- 退社時刻（時） -->
         <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td>
         <!-- 退社時刻（分） -->
+        <!-- 過去の15分刻みver. → <td><%= day.finished_at.floor_to(15.minutes).min if day.finished_at.present? %></td> -->
         <td><%= l(day.finished_at, format: :min) if day.finished_at.present? %></td>
         <!-- 退勤登録ボタン（当日でかつ出社済みで未退社で） -->
         <td>
