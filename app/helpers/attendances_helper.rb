@@ -10,7 +10,7 @@ module AttendancesHelper
       return '退勤' if attendance.started_at.present? && attendance.finished_at.nil?
     end
     # どれにも当てはまらなかった場合はfalseを返します。
-    return false
+    false
   end
 
 
