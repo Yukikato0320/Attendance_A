@@ -46,7 +46,7 @@ Rails.application.routes.draw do
       get 'working_employees'
     end
 
-    # 上長1&2 モーダル各種
+    # 上長1 & 上長2 モーダル各種
     # GET /users/:user_id/edit_overtime_approval
     get 'edit_overtime_approval' # 上長 残業モーダル 編集
     # PATCH /users/:user_id/update_overtime_approval
